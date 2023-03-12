@@ -6,34 +6,22 @@ LABEL description="A distccd image based on alpine based on Konrad Kleine's Fedo
 ENV LANG=en_US.utf8
 
 RUN apk add --no-cache \
-    clang \
-    distcc \
-    distcc-pump \
-    gcc \
-    htop 
+	clang \
+	distcc \
+	distcc-pump \
+	gcc \
+	htop \
+	python3 \
+	make \
+	dbus \
+	avahi \
+	avahi-dev \
+	avahi-compat-libdns_sd  
 
 ENV HOME=~./
 # Define how to start distccd by default
 # (see "man distccd" for more information)
-ENTRYPOINT [\
-  "distccd", \
-  "--daemon", \
-  "--no-detach", \
-  "--port", "3632", \
-  "--stats", \
-  "--stats-port", "3633", \
-  "--log-stderr", \
-  "--listen", "0.0.0.0"\
-]
-
-# By default the distcc server will accept clients from everywhere.
-# Feel free to run the docker image with different values for the
-# following params.
-CMD [\
-  "--allow", "0.0.0.0/0", \
-  "--nice", "5", \
-  "--jobs", "5" \
-]
+ENTRYPOINT ["./startup.sh"]
 
 # 3632 is the default distccd port
 # 3633 is the default distccd port for getting statistics over HTTP
