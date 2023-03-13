@@ -1,36 +1,70 @@
 FROM alpine:edge
 
 LABEL maintainer="n30f0x"
-LABEL author="n30f0x, Konrad Kleine <kkleine@redhat.com>"
-LABEL description="A distccd image based on alpine based on Konrad Kleine's Fedora 29 version, https://github.com/kwk/distcc-docker-images"
+LABEL author="n30f0x"
+LABEL description="A distccd image based on alpine"
 ENV LANG=en_US.utf8
+ENV USER=distcc
+ENV UID=12345
+ENV GID=23456
 
 RUN apk add --no-cache \
-	clang \
-	distcc \
-	distcc-pump \
-	gcc \
-	htop \
-	python3 \
-	make \
-	dbus \
-	avahi \
-	avahi-dev \
-	avahi-compat-libdns_sd  
+  clang \
+  gcc \
+  g++ \
+  make \
+  binutils-dev \
+  python3-dev \
+  autoconf \
+  automake \
+  avahi \
+  avahi-dev \
+  avahi-compat-libdns_sd \
+  avahi-tools \
+  htop \
+  wget
+  
 
-ENV HOME=~./
-# Define how to start distccd by default
-# (see "man distccd" for more information)
-ENTRYPOINT ["./startup.sh"]
+RUN rm /etc/avahi/services/*
+RUN sed -i 's/.*enable-dbus=.*/enable-dbus=no/' /etc/avahi/avahi-daemon.conf
 
-# 3632 is the default distccd port
-# 3633 is the default distccd port for getting statistics over HTTP
+RUN wget https://github.com/distcc/distcc/archive/refs/tags/v3.4.tar.gz
+RUN tar -xvf v3.4.tar.gz
+WORKDIR distcc-3.4/
+RUN sed -i 's@sys/poll.h@poll.h@g' src/zeroconf-reg.c
+RUN ./autogen.sh
+RUN ./configure --with-avahi
+RUN make -i
+RUN make install clean
+RUN update-distcc-symlinks
+
+RUN adduser \
+ --disabled-password \
+    --gecos "" \
+    --home "$(pwd)" \
+    --no-create-home \
+    --uid "$UID" \
+    "$USER"
+
+ENTRYPOINT [\
+  "distccd", \
+  "--daemon", \
+  "--port", "3632", \
+  "--stats", \
+  "--stats-port", "3633", \
+  "--log-stderr", \
+  "--listen", "0.0.0.0", \
+  "--zeroconf", \
+  "--allow", "0.0.0.0"]
+
+CMD [ "avahi-daemon" ]
+
+VOLUME ["/etc/avahi/services"]
+
 EXPOSE \
   3632/tcp \
-  3633/tcp
+  3633/tcp \
+  5353
 
-# We check the health of the container by checking if the statistics
-# are served. (See
-# https://docs.docker.com/engine/reference/builder/#healthcheck)
 HEALTHCHECK --interval=5m --timeout=3s \
   CMD curl -f http://0.0.0.0:3633/ || exit 1
