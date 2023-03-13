@@ -28,7 +28,7 @@ RUN apk add --no-cache \
 RUN rm /etc/avahi/services/*
 RUN sed -i 's/.*enable-dbus=.*/enable-dbus=no/' /etc/avahi/avahi-daemon.conf
 
-RUN wget -4 -O https://github.com/distcc/distcc/archive/refs/tags/v3.4.tar.gz
+RUN wget -4 https://github.com/distcc/distcc/archive/refs/tags/v3.4.tar.gz
 RUN tar -zxvf v3.4.tar.gz
 WORKDIR distcc-3.4/
 RUN sed -i 's@sys/poll.h@poll.h@g' src/zeroconf-reg.c
