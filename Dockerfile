@@ -17,17 +17,23 @@ RUN apk add --no-cache \
   python3-dev \
   autoconf \
   automake \
+  m4 \
+  libtool \
+  pkgconfig \
   avahi \
   avahi-dev \
   avahi-compat-libdns_sd \
   avahi-tools \
+  musl-nscd-dev \
+  gcompat \
+  dbus \
   htop \
   wget
   
 
-RUN rm /etc/avahi/services/*
-RUN sed -i 's/.*enable-dbus=.*/enable-dbus=no/' /etc/avahi/avahi-daemon.conf
-
+# RUN rm /etc/avahi/services/*
+# RUN sed -i 's/.*enable-dbus=.*/enable-dbus=no/' /etc/avahi/avahi-daemon.conf
+WORKDIR /temp/
 RUN wget -4 https://github.com/distcc/distcc/archive/refs/tags/v3.4.tar.gz
 RUN tar -zxvf v3.4.tar.gz
 WORKDIR distcc-3.4/
@@ -46,6 +52,18 @@ RUN adduser \
     --uid "$UID" \
     "$USER"
 
+WORKDIR /temp/
+
+RUN wget -4 https://github.com/lathiat/nss-mdns/archive/refs/tags/v0.15.1.tar.gz
+RUN tar -zxvf v0.15.1.tar.gz
+WORKDIR nss-mdns-0.15.1/
+RUN autoreconf -i
+RUN ./configure
+RUN make -i
+RUN make install
+
+RUN avahi-daemon -D
+
 ENTRYPOINT [\
   "distccd", \
   "--daemon", \
@@ -53,11 +71,11 @@ ENTRYPOINT [\
   "--stats", \
   "--stats-port", "3633", \
   "--log-stderr", \
-  "--listen", "0.0.0.0", \
+  "--allow", "0.0.0.0", \
   "--zeroconf", \
-  "--allow", "0.0.0.0"]
+  "--no-detach"]
+ # "--log-level", "debug", \
 
-CMD [ "avahi-daemon" ]
 
 VOLUME ["/etc/avahi/services"]
 
