@@ -54,7 +54,7 @@ RUN ./autogen.sh
 RUN ./configure --with-auth=yes --enable-rfc2553=yes --enable-profile=yes 
 # --with-avahi doesn't exist here, took me a while to figure out
 RUN make -i
-RUN make install # clean
+RUN make install clean -i
 RUN update-distcc-symlinks
 
 
