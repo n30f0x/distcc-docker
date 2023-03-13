@@ -95,7 +95,7 @@ ENTRYPOINT [\
   "--daemon", \
   "--verbose", \
   "--make-me-a-botnet", \
-  "-j", "12", \
+ # "-j", "12", \
   "--port", "3632", \
   "--stats", \
   "--stats-port", "3633", \
