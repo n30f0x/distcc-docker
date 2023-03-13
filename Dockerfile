@@ -46,17 +46,17 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
 # RUN sed -i 's/.*enable-dbus=.*/enable-dbus=no/' /etc/avahi/avahi-daemon.conf
 
 # build distcc from source
-#WORKDIR /temp/
-#RUN wget -4 https://github.com/distcc/distcc/archive/refs/tags/v3.4.tar.gz
-#RUN tar -zxvf v3.4.tar.gz
-#WORKDIR distcc-3.4/
-#RUN sed -i 's@sys/poll.h@poll.h@g' src/zeroconf-reg.c
-#RUN ./autogen.sh
-#RUN ./configure --with-auth=yes --enable-rfc2553=yes --enable-profile=yes 
+# WORKDIR /temp/
+# RUN wget -4 https://github.com/distcc/distcc/archive/refs/tags/v3.4.tar.gz
+# RUN tar -zxvf v3.4.tar.gz
+# WORKDIR distcc-3.4/
+# RUN sed -i 's@sys/poll.h@poll.h@g' src/zeroconf-reg.c
+# RUN ./autogen.sh
+# RUN ./configure --with-auth=yes --enable-rfc2553=yes --enable-profile=yes 
 # --with-avahi doesn't exist here, took me a while to figure out
-#RUN make -i
-#RUN make install clean -i
-#RUN update-distcc-symlinks
+# RUN make -i
+# RUN make install clean -i
+# RUN update-distcc-symlinks
 
 
 # build nss-mdns if needed, pure pain in arse
@@ -71,7 +71,7 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
 # poettering sucks btw
 
 # make distcc masquarade
-#RUN adduser \
+# RUN adduser \
 # --disabled-password \
 #    --gecos "" \
 #    --home "$(pwd)" \
@@ -112,7 +112,8 @@ ENTRYPOINT [\
 EXPOSE \
   3632/tcp \
   3633/tcp \
-  #  5353
+  
+#  5353
 
 # general healthcheck
 HEALTHCHECK --interval=5m --timeout=3s \
