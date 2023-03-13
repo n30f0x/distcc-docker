@@ -70,7 +70,7 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
 # RUN make install
 # poettering sucks btw
 
-make distcc masquarade
+# make distcc masquarade
  RUN adduser \
  --disabled-password \
     --gecos "" \
