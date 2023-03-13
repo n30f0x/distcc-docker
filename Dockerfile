@@ -101,8 +101,8 @@ ENTRYPOINT [\
   "--stats-port", "3633", \
   "--log-stderr", \
   "--allow", "0.0.0.0", \
-  "--listen", "0.0.0.0"]
- # "--no-detach" \
+  "--listen", "0.0.0.0" \
+  "--no-detach"]
  # "--zeroconf", \ # for some unknown reason option doesn't actually exist?! ffs
  # "--log-level", "debug", \
 
