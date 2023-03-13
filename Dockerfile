@@ -93,6 +93,9 @@ RUN sed -i 's@ZEROCONF="false"@ZEROCONF="true"@g' /etc/default/distcc
 ENTRYPOINT [\
   "distccd", \
   "--daemon", \
+  "--verbose", \
+  "--make-me-a-botnet", \
+  "-j", "12", \
   "--port", "3632", \
   "--stats", \
   "--stats-port", "3633", \
