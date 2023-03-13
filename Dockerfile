@@ -5,10 +5,10 @@ LABEL author="n30f0x"
 LABEL description="A distccd image with zeroconf"
 
 # general environment
-#ENV LANG=en_US.utf8
-#ENV USER=distcc
-#ENV UID=12345
-#ENV GID=23456
+ENV LANG=en_US.utf8
+ENV USER=distcc
+ENV UID=12345
+ENV GID=23456
 
 # update packages
 RUN apt-get update
@@ -70,14 +70,14 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
 # RUN make install
 # poettering sucks btw
 
-# make distcc masquarade
-# RUN adduser \
-# --disabled-password \
-#    --gecos "" \
-#    --home "$(pwd)" \
-#    --no-create-home \
-#    --uid "$UID" \
-#    "$USER"
+make distcc masquarade
+ RUN adduser \
+ --disabled-password \
+    --gecos "" \
+    --home "$(pwd)" \
+    --no-create-home \
+    --uid "$UID" \
+    "$USER"
 
 # idk why this is needed, i just seen examples
 # VOLUME ["/etc/avahi/services"]
