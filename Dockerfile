@@ -1,18 +1,24 @@
-FROM  ubuntu:20.04
+#FROM  ubuntu:20.04
+FROM nixos/nix
 
 LABEL maintainer="n30f0x"
 LABEL author="n30f0x"
 LABEL description="A distccd image with zeroconf"
 
+RUN nix-channel --update
+
+RUN nix --extra-experimental-features nix-command --extra-experimental-features flake nix flake lock -I nixpkgs=https://api.mynixos.com/n-30-f-0-x/moonlight-delta/number/17.tar.gz
+
+# RUN nix -extra-experimental-features nix-command --extra-experimental-features flake lock 
 # general environment
-ENV LANG=en_US.utf8
-ENV USER=distcc
-ENV UID=12345
-ENV GID=23456
+# ENV LANG=en_US.utf8
+# ENV USER=distcc
+# ENV UID=12345
+# ENV GID=23456
 
 # update packages
-RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
+# RUN apt-get update
+# RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
   #  clang \
   #  gcc \
   #  g++ \
@@ -37,9 +43,10 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
   #  libnss-mdns \
   #  libkrb5-dev \
   #  libgssapi-krb5-2 \
-  htop \
-  wget \
-  distcc
+  #  htop \
+  #  wget \
+  #  distcc \
+  #  gcc-arm-none-eabi \
 
 # patch out service
 # RUN rm /etc/avahi/services/*
@@ -71,13 +78,13 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
 # poettering sucks btw
 
 # make distcc masquarade
- RUN adduser \
- --disabled-password \
-    --gecos "" \
-    --home "$(pwd)" \
-    --no-create-home \
-    --uid "$UID" \
-    "$USER"
+# RUN adduser \
+# --disabled-password \
+#    --gecos "" \
+#    --home "$(pwd)" \
+#    --no-create-home \
+#    --uid "$UID" \
+#    "$USER"
 
 # idk why this is needed, i just seen examples
 # VOLUME ["/etc/avahi/services"]
@@ -87,7 +94,7 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
 # RUN service avahi-daemon restart
 
 # attempt to patch out zeroconf
-RUN sed -i 's@ZEROCONF="false"@ZEROCONF="true"@g' /etc/default/distcc
+# RUN sed -i 's@ZEROCONF="false"@ZEROCONF="true"@g' /etc/default/distcc
 # RUN cat /etc/default/distcc
 
 # general entrypoint, proceed with caution
@@ -111,7 +118,7 @@ ENTRYPOINT [\
 # ports for distcc, distcc monitor and avahi
 EXPOSE \
   3632/tcp \
-  3633/tcp \
+  3633/tcp 
   
 #  5353
 
